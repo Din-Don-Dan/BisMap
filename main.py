@@ -31,10 +31,6 @@ rt = max(BG.nodes)+1
 for x in roots:
     BG.add_edge(rt, x)
 
-subax3 = plt.subplot(111)
-nx.draw(BG, with_labels=True, font_weight='bold')
-
-
 print(bp.dovier_piazza_policriti(BG, is_integer_graph=True))
 
 # 5 a0, 6 a1, 7 b0, 8 b1
