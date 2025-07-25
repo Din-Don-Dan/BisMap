@@ -16,15 +16,6 @@ Circuit.add_edges_from(circuit_edges)
 #Circuitscc = nx.condensation(Circuit)
 #print(Circuit_scc.number_of_nodes())
 
-#subax1 = plt.subplot(121)
-#nx.draw(Coupling, with_labels=True, font_weight='bold')
-#plt.show()
-
-#subax2 = plt.subplot(121)
-#nx.draw(Circuit, with_labels=True, font_weight='bold')
-#plt.show()
-
-
 roots = []
 for x in Circuit.nodes:
     if not Circuit.in_degree(x):
@@ -45,8 +36,6 @@ nx.draw(BG, with_labels=True, font_weight='bold')
 
 
 print(bp.dovier_piazza_policriti(BG, is_integer_graph=True))
-
-plt.show()
 
 # 5 a0, 6 a1, 7 b0, 8 b1
 
