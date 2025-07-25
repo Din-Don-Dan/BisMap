@@ -1,6 +1,6 @@
 import networkx as nx
-import matplotlib.pyplot as plt
 import bispy as bp #https://github.com/fandreuz/BisPy
+#import matplotlib.pyplot as plt
 
 coupling_edges = [[0,1],[0,2],[1,2],[3,2],[3,4],[4,2]]
 Coupling = nx.DiGraph()
