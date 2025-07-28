@@ -39,20 +39,8 @@ for x in roots:
 bis = bp.dovier_piazza_policriti(BG, is_integer_graph=True)
 print(bis)
 
-# 5 a0, 6 a1, 7 b0, 8 b1
-
 # mapping esatto da https://hal.science/hal-01655951/file/Siraichi_QubitAllocation_CGO18.pdf:
 # 0 -> 6, 1 -> x, 2 -> 7, 3 -> 5, 4 -> 8
-
-# coupling:
-# [0,1],[0,2],[1,2],[3,2],[3,4],[4,2]
-
-# mapped circuit interactions after Bis [(2, 8), (1, 4, 7), (6,), (0, 3, 5), (9,)]:
-# 5 -> 3, 6 -> 0, 7 -> 4, 8 -> 2. (9 artificiale rimosso) 
-# [5,7],[5,8],[6,7],[7,8] in
-# [3,2],[3,4],[0,2],[2,4]
-
-# effettivamente si introduce solo il reversal in 2,4
 
 #come decidere il mapping:
 coupling_stack = queue.LifoQueue(maxsize=n+1)
@@ -65,19 +53,26 @@ for bisset in bis:
         if node <= n:
             if not circuit_stack.empty():
                 candidate = circuit_stack.get()
-                mapping.append([node,candidate])
+                mapping.append([candidate, node])
             else:
                 coupling_stack.put(node)
         if node > n:
             if not coupling_stack.empty():
                 candidate = coupling_stack.get()
-                mapping.append([candidate,node])
+                mapping.append([node, candidate])
             else:
                 circuit_stack.put(node)
 
-print(mapping)
+mdict = dict(mapping)
+print(mdict)
+
+mapped = []
+for x in circuit_edges:
+    mapped.append(list(map(mdict.get, x)))
+print(mapped)
+
 # debug:
 # può essere >0
 print("nodi rimasti in coupling", coupling_stack.qsize())
 # se non 0, problema. 
-print("nodi rimasti in circuit", circuit_stack.qsize())             
+print("nodi rimasti in circuit", circuit_stack.qsize())
