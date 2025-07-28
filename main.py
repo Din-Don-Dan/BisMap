@@ -37,7 +37,6 @@ for x in roots:
     BG.add_edge(rt, x)
 
 bis = bp.dovier_piazza_policriti(BG, is_integer_graph=True)
-print(bis)
 
 # mapping esatto da https://hal.science/hal-01655951/file/Siraichi_QubitAllocation_CGO18.pdf:
 # 0 -> 6, 1 -> x, 2 -> 7, 3 -> 5, 4 -> 8
@@ -46,6 +45,9 @@ print(bis)
 coupling_stack = queue.LifoQueue(maxsize=n+1)
 circuit_stack = queue.LifoQueue(maxsize=rt-n)
 mapping = []
+
+bis.reverse()
+
 for bisset in bis:
     for node in bisset: #scorre m+1 nodi, lineare non quadratico
         if node == rt:
@@ -64,15 +66,17 @@ for bisset in bis:
                 circuit_stack.put(node)
 
 mdict = dict(mapping)
-print(mdict)
+print("Mapping qubit {logico : fisico} :", mdict)
 
 mapped = []
 for x in circuit_edges:
     mapped.append(list(map(mdict.get, x)))
-print(mapped)
+print("Circuito mappato:", mapped)
 
 # debug:
-# può essere >0
-print("nodi rimasti in coupling", coupling_stack.qsize())
-# se non 0, problema. 
-print("nodi rimasti in circuit", circuit_stack.qsize())
+l = []
+while not coupling_stack.empty():
+    l.append(coupling_stack.get())
+    print("qubit fisici non utilizzati:" ,l)
+if not circuit_stack.empty():
+    print("Errore - Circuit stack non vuota")
