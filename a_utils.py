@@ -80,25 +80,31 @@ devices_coupling_maps_dict = {"IBM Athens":[[0,1],[1,2],[2,3],[3,4],[1, 0], [2, 
                         [36, 25], [38, 25], [27, 38], [27, 40], [29, 40], [29, 42], [31, 42], [44, 31], [33, 44], [46, 33], [35, 46], 
                         [48, 37], [50, 37], [39, 50], [52, 39], [41, 52], [54, 41], [43, 54], [56, 43], [56, 45], [58, 45], [47, 58], 
                         [60, 49], [62, 49], [51, 62], [64, 51], [53, 64], [66, 53], [55, 66], [68, 55], [57, 68], [70, 57], [59, 70]]}
+
 def add_weights(dict):
     for k, v in dict.items():
         for entry in v:
             entry.append(float(f"{random.random():.3f}"))
     return dict
 
+def add_weights_list(list):
+    for entry in list:
+        entry.append(float(f"{random.random():.3f}"))
+    return list
+
 def filter(nxDiGraph): #input: list of triples [node, node, weight]
     out_list = []
-    added = dict()
+    seen = dict()
     for val in nxDiGraph.edges.data('weight'):
         m, n, w = val[0], val[1], val[2]
         id = (m+n)**max(m,n) # not an injection, (m, n) and (n, m) map to the same int, which allows for simmetry
-        if id in added: #edge (n, m) is in the graph
-            if nxDiGraph.edges[n, m]['weight'] >= w:
+        if id in seen: #edge (n, m) is in the graph
+            if nxDiGraph.edges[n, m]['weight'] >= w: #dict lookup in O(1)
                 out_list.append(val)
             else:
                 out_list.append([n, m])
         else:
-            added[id] = w
+            seen[id] = w
     return out_list
 
 # Ipotesi che Coupling e Circuit siano diretti a priori (nessun problema di dimensioni di scc)
@@ -152,8 +158,8 @@ def bismap(Coupling, circuit_edges):
                     circuit_stack.put(node)
 
     mdict = dict(mapping)
-
-    mapped = []
-    for x in circuit_edges:
-        mapped.append(list(map(mdict.get, x)))
-    return mapped
+    return mdict
+    #mapped = []
+    #for x in circuit_edges:
+    #    mapped.append(list(map(mdict.get, x)))
+    #return mapped
