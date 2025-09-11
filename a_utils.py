@@ -107,6 +107,29 @@ def filter(nxDiGraph): #input: list of triples [node, node, weight]
             seen[id] = w
     return out_list
 
+def trivial_map(bis, root, max_coupling_nodes):
+    
+    coupling_stack = queue.LifoQueue(maxsize=max_coupling_nodes+1)
+    circuit_stack = queue.LifoQueue(maxsize=root-max_coupling_nodes)
+    mapping = []
+
+    for bisset in bis:
+        for node in bisset: #scorre m+1 nodi, lineare non quadratico
+            if node == root:
+                continue
+            if node <= max_coupling_nodes:
+                if not circuit_stack.empty():
+                    candidate = circuit_stack.get()
+                    mapping.append([candidate, node])
+                else:
+                    coupling_stack.put(node)
+            if node > max_coupling_nodes:
+                if not coupling_stack.empty():
+                    candidate = coupling_stack.get()
+                    mapping.append([node, candidate])
+                else:
+                    circuit_stack.put(node)
+
 # Ipotesi che Coupling e Circuit siano diretti a priori (nessun problema di dimensioni di scc)
 # nodi Coupling da 0 a n
 # nodi Circuit da n+1 a m
@@ -134,28 +157,10 @@ def bismap(Coupling, circuit_edges):
     bis = bp.dovier_piazza_policriti(BG, is_integer_graph=True)
 
     #come decidere il mapping:
-    coupling_stack = queue.LifoQueue(maxsize=n+1)
-    circuit_stack = queue.LifoQueue(maxsize=rt-n)
-    mapping = []
-
+    
     bis.reverse()
 
-    for bisset in bis:
-        for node in bisset: #scorre m+1 nodi, lineare non quadratico
-            if node == rt:
-                continue
-            if node <= n:
-                if not circuit_stack.empty():
-                    candidate = circuit_stack.get()
-                    mapping.append([candidate, node])
-                else:
-                    coupling_stack.put(node)
-            if node > n:
-                if not coupling_stack.empty():
-                    candidate = coupling_stack.get()
-                    mapping.append([node, candidate])
-                else:
-                    circuit_stack.put(node)
+    mapping = trivial_map(bis, rt, n)
 
     mdict = dict(mapping)
     return mdict
