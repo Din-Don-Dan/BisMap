@@ -92,20 +92,38 @@ def add_weights_list(list):
         entry.append(float(f"{random.random():.3f}"))
     return list
 
-def filter(nxDiGraph): #input: list of triples [node, node, weight]
-    out_list = []
+#def filter(nxDiGraph): #nx DiGraph
+#    out_list = []
+#    seen = dict()
+#    for val in nxDiGraph.edges.data('weight'):
+#        m, n, w = val[0], val[1], val[2]
+#        id = (m+n)**max(m,n) # not an injection, (m, n) and (n, m) map to the same int, which allows for simmetry
+#        if id in seen: #edge (n, m) is in the graph
+#            if nxDiGraph.edges[n, m]['weight'] >= w: #dict lookup in O(1)
+#                out_list.append(val)
+#            else:
+#                out_list.append([n, m])
+#        else:
+#            seen[id] = w
+#    return out_list
+
+def filter_list(list): #input: list of triples [[node, node, weight],...]
+    keep_list = []
     seen = dict()
-    for val in nxDiGraph.edges.data('weight'):
+    for val in list:
         m, n, w = val[0], val[1], val[2]
         id = (m+n)**max(m,n) # not an injection, (m, n) and (n, m) map to the same int, which allows for simmetry
         if id in seen: #edge (n, m) is in the graph
-            if nxDiGraph.edges[n, m]['weight'] >= w: #dict lookup in O(1)
-                out_list.append(val)
+            if seen[id] < w: #dict lookup in O(1)
+                keep_list.append([m, n])
             else:
-                out_list.append([n, m])
+                keep_list.append([n, m])
         else:
             seen[id] = w
-    return out_list
+    return keep_list
+
+def add_c(lista, const):
+    return list(map(lambda x: x+const, lista))
 
 def trivial_map(bis, root, max_coupling_nodes):
     
@@ -129,6 +147,7 @@ def trivial_map(bis, root, max_coupling_nodes):
                     mapping.append([node, candidate])
                 else:
                     circuit_stack.put(node)
+    return mapping
 
 # Ipotesi che Coupling e Circuit siano diretti a priori (nessun problema di dimensioni di scc)
 # nodi Coupling da 0 a n

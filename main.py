@@ -43,16 +43,17 @@ if __name__ == "__main__":
     i = 0
     points = [(None,None)] * len(a_utils.devices_coupling_maps_dict.keys())
     points_2 = [(None,None)] * len(a_utils.devices_coupling_maps_dict.keys())
-    for n in n_entries_list:
-        for device, coupling_map in a_utils.devices_coupling_maps_dict.items():
-            print(device)
+    #for n in n_entries_list:
+    n = 2
+    for device, coupling_map in a_utils.devices_coupling_maps_dict.items():
+        print(device)
     
-            points[i] = (device,
+        points[i] = (device,
                         benchmark(circuit_edges, n, coupling_map, a_test.sabre_circuit, resolution))
         
-            points_2[i] = (device,
+        points_2[i] = (device,
                         benchmark(circuit_edges, n, coupling_map, a_test.bismap_circuit, resolution))
-            i += 1
+        i += 1
 
     xs1, ys1= zip(*points)
     plt.figure()
@@ -61,9 +62,8 @@ if __name__ == "__main__":
     plt.title('Average mapping time')
     plt.xlabel('Coupling architecture')
     plt.ylabel('Time (s)')
-    plt.legend()
+    plt.legend('Sabre')
     plt.savefig('grafico_sabre.png')
-    plt.show()
 
     xs2, ys2= zip(*points_2)
     plt.figure()
@@ -72,6 +72,6 @@ if __name__ == "__main__":
     plt.title('Average mapping time')
     plt.xlabel('Coupling architecture')
     plt.ylabel('Time (s)')
-    plt.legend()
+    plt.legend('Bis')
     plt.savefig('grafico_bis.png')
     plt.show()
