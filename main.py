@@ -37,7 +37,6 @@ if __name__ == "__main__":
     
     # add weights to all the edges of all Couplings 
     a_utils.add_weights(a_utils.devices_coupling_maps_dict)
-    a_utils.add_weights_list(circuit_edges)
     
     # plot average time to compute mapping for all device couplings with the same circuit. 
     i = 0
